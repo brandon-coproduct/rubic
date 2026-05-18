@@ -19,6 +19,8 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/geist-mono": "^5.2.8",
     "cytoscape": "^3.33.3",
     "cytoscape-dagre": "^3.0.0"
   }

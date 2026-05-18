@@ -1,19 +1,77 @@
+/* Vercel's typeface family — designed dark-first, sits in the same
+   visual register as Linear / Stripe / Warp / Raycast. Variable so we
+   pay one font download for the whole weight range. */
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+:root {
+  /* Type system: one family, three sizes, two weights. Anything outside
+     this scale is a smell. */
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular,
+    'JetBrains Mono', Consolas, monospace;
+
+  --fs-eyebrow: 10px;
+  --fs-label:   11px;
+  --fs-body:    13px;
+  --fs-head:    19px;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+
+  --leading-tight: 1.25;
+  --leading-body:  1.55;
+
+  /* Surface palette — slate scale + single gold accent. The discipline is
+     "all chrome lives in this palette, ever; if you need a color outside it,
+     question whether the element needs to exist." */
+  --bg:        #050913; /* page */
+  --bg-1:      #0b1220; /* panel */
+  --bg-2:      #0f172a; /* card */
+  --bg-3:      #1e293b; /* input / hover */
+  --border:    #1e293b; /* subtle border in dark mode */
+  --border-2:  #334155; /* slightly stronger border for emphasis */
+  --text:      #e2e8f0; /* primary */
+  --text-2:    #cbd5e1; /* secondary */
+  --text-3:    #94a3b8; /* tertiary / labels */
+  --text-4:    #64748b; /* quaternary / disabled */
+
+  --accent:    #d4a017; /* gold — single accent, used sparingly */
+  --accept:    #16a34a; /* green — outcome only */
+  --reject:    #dc2626; /* red — outcome only */
+
+  /* Spacing tokens — multiples of 4 */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 48px;
+
+  --radius: 6px;
+
+  color-scheme: dark;
+}
+
 html,
 body,
 #app {
   height: 100%;
   margin: 0;
-  background: #050913;
-  color: #e2e8f0;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--leading-body);
+  /* Sharper rendering on retina; matches Linear/Vercel feel. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'ss01', 'cv11';
 }
 
 * {
@@ -23,4 +81,11 @@ body,
 #app {
   display: flex;
   flex-direction: column;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
 }
