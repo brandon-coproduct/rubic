@@ -313,7 +313,7 @@
     </div>
 
     <div class="right">
-      <span class="hint">drag to scrub · gold = new in this frame</span>
+      <span class="hint">drag to scrub · gold ring = new in this frame</span>
     </div>
   </div>
 </div>
