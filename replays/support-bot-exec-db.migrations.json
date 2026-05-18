@@ -1,0 +1,19 @@
+{
+  "id": "support-bot-exec-db.migrations",
+  "goal": {
+    "user": "support-bot",
+    "action": "exec",
+    "resource": "db.migrations"
+  },
+  "agent": {
+    "raw_json": "{\"proposals\":[{\"role\":\"db-admin\",\"reasoning\":\"db-admin is the only role containing exec:db.migrations, though this permission requires_approval per policy so automatic assignment will be rejected by the verifier.\"}]}",
+    "proposals": [
+      {
+        "role": "db-admin",
+        "reasoning": "db-admin is the only role containing exec:db.migrations, though this permission requires_approval per policy so automatic assignment will be rejected by the verifier."
+      }
+    ],
+    "model_used": "sonnet"
+  },
+  "recorded_at": "2026-05-18T04:02:16.083015Z"
+}

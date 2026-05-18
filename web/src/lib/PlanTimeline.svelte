@@ -10,7 +10,7 @@
     {outcome.goal_unreachable.explanation}
   </div>
 {:else if outcome && outcome.candidates.length === 0}
-  <div class="card muted">No candidates generated.</div>
+  <div class="card muted">No candidate tool-grants generated.</div>
 {:else if outcome}
   <div class="timeline">
     {#each outcome.candidates as c, i (c.role)}

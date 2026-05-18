@@ -1,0 +1,23 @@
+{
+  "id": "support-bot-delete-db.users",
+  "goal": {
+    "user": "support-bot",
+    "action": "delete",
+    "resource": "db.users"
+  },
+  "agent": {
+    "raw_json": "{\"proposals\":[{\"role\":\"support-writer\",\"reasoning\":\"Closest least-privilege escalation from support-readonly, but does not grant delete:db.users — included as best partial match since no role grants delete:db.users without also including forbidden permission delete:db.users via db-admin.\"},{\"role\":\"db-admin\",\"reasoning\":\"Only role that includes delete:db.users, but this permission is explicitly forbidden by policy and will be rejected by the verifier.\"}]}",
+    "proposals": [
+      {
+        "role": "support-writer",
+        "reasoning": "Closest least-privilege escalation from support-readonly, but does not grant delete:db.users — included as best partial match since no role grants delete:db.users without also including forbidden permission delete:db.users via db-admin."
+      },
+      {
+        "role": "db-admin",
+        "reasoning": "Only role that includes delete:db.users, but this permission is explicitly forbidden by policy and will be rejected by the verifier."
+      }
+    ],
+    "model_used": "sonnet"
+  },
+  "recorded_at": "2026-05-18T04:02:23.276061Z"
+}

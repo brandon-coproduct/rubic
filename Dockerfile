@@ -50,7 +50,7 @@ COPY migrations     /app/migrations
 
 ENV RUBIC_BIND=0.0.0.0:8080 \
     RUBIC_STATIC_DIR=/app/static \
-    RUBIC_MODEL=/app/examples/rbac_demo.toml \
+    RUBIC_MODEL=/app/examples/agent_demo.toml \
     RUBIC_DB_URL=sqlite:///tmp/rubic.db \
     RUBIC_KEY_PATH=/tmp/rubic.key \
     RUBIC_ALLOW_LIVE_AGENT=0 \

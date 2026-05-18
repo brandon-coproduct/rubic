@@ -1,0 +1,71 @@
+# Tool-call authorization for AI agents.
+#
+# Same RBAC algebra, applied to the actual 2026 problem: not "Alice the
+# human wants to read payroll" but "this AI agent wants to invoke this
+# tool with these args — is that within its sanctioned authority?"
+#
+# Mapping:
+#   user         → AI agent persona (code-reviewer-bot, support-bot, …)
+#   role         → a bundle of tool-call capabilities
+#   permission   → one tool capability  (action:target)
+#   goal         → the tool call the agent wants to make
+#   accepted     → the planner found a least-privilege grant that authorizes the call
+#   rejected     → the call would violate policy; the call should not execute
+
+[users.code-reviewer-bot]
+roles = ["pr-reader"]
+
+[users.support-bot]
+roles = ["support-readonly"]
+
+[users.db-migration-runner]
+roles = []
+
+[roles.pr-reader]
+permissions = [
+  "read:github.pulls",
+  "read:github.repo",
+  "read:github.diffs",
+]
+
+[roles.support-readonly]
+permissions = [
+  "read:db.knowledge_base",
+  "read:db.tickets",
+]
+
+[roles.support-writer]
+permissions = [
+  "read:db.knowledge_base",
+  "read:db.tickets",
+  "write:db.tickets",
+]
+
+[roles.db-admin]
+permissions = [
+  "read:db.users",
+  "read:db.tickets",
+  "write:db.users",
+  "delete:db.users",
+  "exec:db.migrations",
+]
+
+[policy]
+least_privilege = true
+# Capabilities the verifier will NEVER auto-grant, regardless of agent.
+# A role that bundles these will be rejected outright.
+forbidden_permissions = [
+  "delete:db.users",
+  "exec:bash",
+]
+# Capabilities a human operator must approve out-of-band. The verifier
+# rejects automatic assignment; the call should be routed to a human.
+requires_approval = [
+  "write:db.users",
+  "exec:db.migrations",
+]
+
+[goal]
+user     = "support-bot"
+action   = "write"
+resource = "db.tickets"

@@ -23,9 +23,9 @@
   let rulesDigest = $state('');
   let kid = $state('');
 
-  let user = $state('alice');
-  let action = $state('read');
-  let resource = $state('payroll_summary');
+  let user = $state('support-bot');
+  let action = $state('write');
+  let resource = $state('db.tickets');
 
   let planResp = $state<PlanResponse | null>(null);
   let graph = $state<GraphView | null>(null);
@@ -155,11 +155,12 @@
 
 <header>
   <div class="title">
-    <h1>rubic — Verified Agentic RBAC Planner</h1>
+    <h1>rubic — Verified authorization for AI agent tool calls</h1>
     <div class="sub">
-      The LLM proposes role assignments. An egglog rewrite system + policy
-      invariants validate each one server-side. The signed receipt
-      cryptographically witnesses the decision.
+      An LLM proposes which tool-call capabilities to grant. An egglog
+      rewrite system + policy invariants validate each proposal
+      server-side. A signed, hash-chained receipt cryptographically
+      witnesses the decision. LLMs propose; algebra disposes.
     </div>
   </div>
   <div class="meta">
@@ -211,6 +212,11 @@
       a TOML model + a goal and returns a signed receipt;
       <code>verify_receipt</code> checks any receipt against this server's key.
     </p>
+    <p class="modal-body" style="color:#94a3b8; font-size:12px;">
+      Meta-loop: the rubic MCP server you're about to configure is itself an
+      MCP surface. A production rubic deployment would gate this and every
+      other MCP tool call your agent makes.
+    </p>
     <pre class="mcp-snippet">{mcpSnippet}</pre>
     <div class="modal-actions">
       <button class="copy-btn" onclick={copyMcp}>
@@ -241,7 +247,7 @@
     <h2>Goal</h2>
     {#if replays && replays.available.length > 0}
       <div class="try-chips">
-        <span class="try-label">Try a recorded session →</span>
+        <span class="try-label">Try a recorded tool-call →</span>
         {#each replays.available as g}
           <button
             class="try-chip"
@@ -256,23 +262,30 @@
       </div>
     {/if}
     <div class="goal-form">
-      <label>user
-        <input bind:value={user} placeholder="alice" />
+      <label title="The AI agent persona requesting the tool call"
+        >agent
+        <input bind:value={user} placeholder="support-bot" />
       </label>
-      <label>action
-        <input bind:value={action} placeholder="read" />
+      <label title="The tool verb (read, write, delete, exec, fetch, …)"
+        >action
+        <input bind:value={action} placeholder="write" />
       </label>
-      <label>resource
-        <input bind:value={resource} placeholder="payroll_summary" />
+      <label title="The tool target (db.tickets, github.pulls, https://api.example.com/v1, …)"
+        >resource
+        <input bind:value={resource} placeholder="db.tickets" />
       </label>
-      <button onclick={submitGoal} disabled={loading || askingAgent}>
+      <button
+        onclick={submitGoal}
+        disabled={loading || askingAgent}
+        title="Deterministic enumeration: tries every role in the model, ranks by least privilege, runs policy + egglog checks per candidate."
+      >
         {loading ? 'Planning…' : 'Propose plan'}
       </button>
       <button
         class="agent-btn"
         onclick={askAgent}
         disabled={loading || askingAgent}
-        title="Asks Claude to propose role assignments; server validates each one"
+        title="Asks Claude to propose tool-grant assignments. Server runs each proposal through the same policy + egglog pipeline as the deterministic path."
       >
         {askingAgent ? 'Asking agent…' : 'Ask agent'}
       </button>
@@ -297,7 +310,7 @@
     {#if agentResp}
       <div class="agent-panel">
         <div class="agent-head">
-          <span class="agent-label">Agent (untrusted)</span>
+          <span class="agent-label">LLM proposal (untrusted)</span>
           <code class="agent-model">{agentResp.model_used}</code>
           {#if agentReplayId}
             <span
@@ -321,8 +334,9 @@
         </ul>
         <div class="agent-note">
           Server-side validation result appears in <em>Candidate plans</em> below.
-          The agent's raw output is hashed into the signed receipt's step
-          justification so the decision binds to exactly what the LLM said.
+          The LLM's verbatim output is BLAKE3-hashed and embedded in the signed
+          receipt — even though the proposal text is never trusted, the decision
+          cryptographically binds to exactly what the LLM said.
         </div>
       </div>
     {/if}

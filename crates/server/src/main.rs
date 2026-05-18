@@ -18,7 +18,7 @@ use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 const DEFAULT_BIND: &str = "127.0.0.1:3000";
 const DEFAULT_DB: &str = "sqlite://rubic.db";
 const DEFAULT_KEY: &str = "rubic.key";
-const DEFAULT_MODEL: &str = "examples/rbac_demo.toml";
+const DEFAULT_MODEL: &str = "examples/agent_demo.toml";
 /// When set, the server also serves the SPA's built `dist/` from this path.
 /// In the Fly image we copy `web/dist` → `/app/static`.
 const DEFAULT_STATIC: &str = "";

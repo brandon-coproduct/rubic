@@ -1,0 +1,19 @@
+{
+  "id": "support-bot-write-db.tickets",
+  "goal": {
+    "user": "support-bot",
+    "action": "write",
+    "resource": "db.tickets"
+  },
+  "agent": {
+    "raw_json": "{\"proposals\": [{\"role\": \"support-writer\", \"reasoning\": \"support-writer grants write:db.tickets along with the existing read permissions, making it the minimal privilege upgrade from support-readonly that satisfies the goal.\"}]}",
+    "proposals": [
+      {
+        "role": "support-writer",
+        "reasoning": "support-writer grants write:db.tickets along with the existing read permissions, making it the minimal privilege upgrade from support-readonly that satisfies the goal."
+      }
+    ],
+    "model_used": "sonnet"
+  },
+  "recorded_at": "2026-05-18T04:02:10.365215Z"
+}
