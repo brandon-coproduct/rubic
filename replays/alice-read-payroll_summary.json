@@ -1,0 +1,19 @@
+{
+  "id": "alice-read-payroll_summary",
+  "goal": {
+    "user": "alice",
+    "action": "read",
+    "resource": "payroll_summary"
+  },
+  "agent": {
+    "raw_json": "{\"proposals\": [{\"role\": \"finance_viewer\", \"reasoning\": \"Grants exactly read:payroll_summary with no additional permissions, satisfying the goal at minimum privilege.\"}]}",
+    "proposals": [
+      {
+        "role": "finance_viewer",
+        "reasoning": "Grants exactly read:payroll_summary with no additional permissions, satisfying the goal at minimum privilege."
+      }
+    ],
+    "model_used": "sonnet"
+  },
+  "recorded_at": "2026-05-18T02:37:40.082208Z"
+}

@@ -1,0 +1,12 @@
+target/
+**/target/
+web/node_modules/
+web/dist/
+web/.svelte-kit/
+.git/
+.DS_Store
+*.swp
+rubic.db
+rubic.db-*
+rubic.key
+/tmp/

@@ -1,0 +1,23 @@
+{
+  "id": "alice-delete-payroll",
+  "goal": {
+    "user": "alice",
+    "action": "delete",
+    "resource": "payroll"
+  },
+  "agent": {
+    "raw_json": "{\"proposals\":[{\"role\":\"finance_viewer\",\"reasoning\":\"finance_viewer does not grant delete:payroll, so the verifier will reject it — but it is the least-privilege candidate to surface first for review.\"},{\"role\":\"payroll_admin\",\"reasoning\":\"payroll_admin includes delete:payroll, but this permission is explicitly forbidden by policy and will be rejected by the algebraic verifier.\"}]}",
+    "proposals": [
+      {
+        "role": "finance_viewer",
+        "reasoning": "finance_viewer does not grant delete:payroll, so the verifier will reject it — but it is the least-privilege candidate to surface first for review."
+      },
+      {
+        "role": "payroll_admin",
+        "reasoning": "payroll_admin includes delete:payroll, but this permission is explicitly forbidden by policy and will be rejected by the algebraic verifier."
+      }
+    ],
+    "model_used": "sonnet"
+  },
+  "recorded_at": "2026-05-18T02:37:53.323587Z"
+}

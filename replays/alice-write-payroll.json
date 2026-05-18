@@ -1,0 +1,23 @@
+{
+  "id": "alice-write-payroll",
+  "goal": {
+    "user": "alice",
+    "action": "write",
+    "resource": "payroll"
+  },
+  "agent": {
+    "raw_json": "{\"proposals\": [{\"role\": \"finance_viewer\", \"reasoning\": \"finance_viewer grants only read:payroll_summary and does not include write:payroll, so it will be rejected by the verifier — listed as a least-privilege candidate to surface that no role below payroll_admin satisfies the goal.\"}, {\"role\": \"payroll_admin\", \"reasoning\": \"payroll_admin includes write:payroll which satisfies the goal, but requires_approval policy means this assignment will need manual approval before taking effect.\"}]}",
+    "proposals": [
+      {
+        "role": "finance_viewer",
+        "reasoning": "finance_viewer grants only read:payroll_summary and does not include write:payroll, so it will be rejected by the verifier — listed as a least-privilege candidate to surface that no role below payroll_admin satisfies the goal."
+      },
+      {
+        "role": "payroll_admin",
+        "reasoning": "payroll_admin includes write:payroll which satisfies the goal, but requires_approval policy means this assignment will need manual approval before taking effect."
+      }
+    ],
+    "model_used": "sonnet"
+  },
+  "recorded_at": "2026-05-18T02:37:47.115937Z"
+}

@@ -1,0 +1,15 @@
+/target
+**/*.rs.bk
+Cargo.lock.bak
+
+# Local SQLite + key material
+/rubic.db
+/rubic.db-*
+/rubic.key
+
+# Frontend
+/web/node_modules
+/web/.svelte-kit
+/web/build
+/web/dist
+.DS_Store

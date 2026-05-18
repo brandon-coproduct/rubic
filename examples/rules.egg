@@ -1,0 +1,20 @@
+; RBAC reachability rules.
+;
+; Facts asserted by the engine from the model:
+;   (HasPerm "finance_viewer" (Perm "read" "payroll_summary"))
+;   (Assigned "alice" "finance_viewer")
+;
+; Derived:
+;   (CanReach "alice" (Perm "read" "payroll_summary"))
+
+(datatype Permission
+  (Perm String String))   ; (action, resource)
+
+(relation HasPerm  (String Permission))
+(relation Assigned (String String))
+(relation CanReach (String Permission))
+
+(rule
+  ((Assigned u r)
+   (HasPerm r p))
+  ((CanReach u p)))

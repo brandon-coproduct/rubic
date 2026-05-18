@@ -1,0 +1,36 @@
+# fly.toml — rubic
+# Single-region demo deploy. Scales to zero between visitors.
+
+app            = "rubic"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port       = 8080
+  force_https         = true
+  auto_stop_machines  = "suspend"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes           = ["app"]
+
+  [http_service.concurrency]
+    type       = "requests"
+    soft_limit = 50
+    hard_limit = 100
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus     = 1
+  memory   = "512mb"
+
+[checks]
+  [checks.healthz]
+    type     = "http"
+    port     = 8080
+    method   = "get"
+    path     = "/healthz"
+    interval = "15s"
+    timeout  = "2s"
+    grace_period = "10s"

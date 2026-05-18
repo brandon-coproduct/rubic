@@ -1,0 +1,26 @@
+# Verified Agentic RBAC Planner — demo model
+#
+# Alice currently has only `employee` (read:profile). The agent must propose a
+# minimal lawful role assignment that lets her `read payroll_summary`.
+
+[users.alice]
+roles = ["employee"]
+
+[roles.employee]
+permissions = ["read:profile"]
+
+[roles.finance_viewer]
+permissions = ["read:payroll_summary"]
+
+[roles.payroll_admin]
+permissions = ["read:payroll_summary", "write:payroll", "delete:payroll"]
+
+[policy]
+least_privilege       = true
+forbidden_permissions = ["delete:payroll"]
+requires_approval     = ["write:payroll"]
+
+[goal]
+user     = "alice"
+action   = "read"
+resource = "payroll_summary"
