@@ -87,7 +87,8 @@
 
 <style>
   .editor {
-    background: var(--bg-2);
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: var(--s-4) var(--s-5);
     color: var(--text);
@@ -115,18 +116,18 @@
   }
   button {
     margin-left: auto;
-    background: var(--bg-3);
-    border: none;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     color: var(--text-2);
     padding: 5px 12px;
     border-radius: var(--radius);
     font-size: var(--fs-label);
     font-family: var(--font-sans);
     cursor: pointer;
-    transition: background 120ms ease, color 120ms ease;
+    transition: border-color 120ms ease, color 120ms ease;
   }
   button:hover:not(:disabled) {
-    background: var(--border-2);
+    border-color: var(--accent);
     color: var(--text);
   }
   button:disabled {
@@ -150,7 +151,7 @@
     width: 100%;
     box-sizing: border-box;
     margin-top: var(--s-2);
-    background: var(--bg);
+    background: var(--bg-2);
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -159,6 +160,12 @@
     font-size: var(--fs-label);
     line-height: var(--leading-body);
     resize: vertical;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
   .actions {
     margin-top: var(--s-2);
@@ -168,8 +175,8 @@
   .err {
     margin-top: var(--s-2);
     padding: var(--s-3);
-    background: #2a0808;
-    color: #f87171;
+    background: var(--reject-bg);
+    color: var(--reject-fg);
     border-radius: var(--radius);
     font-size: var(--fs-label);
   }

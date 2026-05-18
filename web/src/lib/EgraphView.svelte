@@ -60,15 +60,17 @@
   });
 
   // Stable HSL color for an eclass — keeps the same class the same color
-  // across frames so the eye can track equivalences.
+  // across frames so the eye can track equivalences. Tuned for white
+  // background: muted pastels with high enough chroma to discriminate
+  // ~8 distinct eclasses, low enough not to read as decorative.
   function eclassColor(eclass: string | undefined): string {
-    if (!eclass) return '#475569';
+    if (!eclass) return '#e4e4e7';
     let h = 0;
     for (let i = 0; i < eclass.length; i++) {
       h = (h * 31 + eclass.charCodeAt(i)) | 0;
     }
     const hue = Math.abs(h) % 360;
-    return `hsl(${hue}, 55%, 55%)`;
+    return `hsl(${hue}, 35%, 88%)`;
   }
 
   // Strip surrounding quotes for nicer labels — egglog literals come in as
@@ -193,6 +195,14 @@
 
   onMount(() => {
     if (!container) return;
+    // Pull live design tokens from CSS so the egraph re-themes if the
+    // page palette is ever swapped — single source of truth in app.css.
+    const css = getComputedStyle(document.documentElement);
+    const tokenAccent = css.getPropertyValue('--accent').trim() || '#1e40af';
+    const tokenBorder = css.getPropertyValue('--border-2').trim() || '#d4d4d8';
+    const tokenText = css.getPropertyValue('--text').trim() || '#09090b';
+    const tokenEdge = css.getPropertyValue('--text-4').trim() || '#71717a';
+
     cy = cytoscape({
       container,
       style: [
@@ -200,20 +210,17 @@
           selector: 'node',
           style: {
             'background-color': 'data(color)',
-            'border-color': '#0b1220',
-            'border-width': 2,
+            'border-color': tokenBorder,
+            'border-width': 1,
             label: 'data(label)',
-            color: '#0b1220',
+            color: tokenText,
             'font-size': 10,
-            'font-weight': 600,
+            'font-weight': 500,
             'text-valign': 'center',
             'text-halign': 'center',
             'text-margin-y': 0,
             'text-wrap': 'wrap',
             'text-max-width': '100px',
-            // Fixed dimensions instead of the deprecated `'label'` value.
-            // Wide enough for the longest realistic egglog op name in our
-            // ruleset; text-wrap handles overflow gracefully.
             width: 96,
             height: 36,
             shape: 'round-rectangle',
@@ -222,25 +229,25 @@
         {
           selector: 'node[?isNew]',
           style: {
-            'border-color': '#d4a017',
-            'border-width': 4,
-            // `shadow-*` was removed in newer Cytoscape; an overlay gives
-            // the same "glow" effect for the new-node highlight.
-            'overlay-color': '#d4a017',
-            'overlay-padding': 8,
-            'overlay-opacity': 0.35,
+            // New-in-this-frame: bold accent border + a soft halo so it
+            // pops without the gaudy gold glow used in dark mode.
+            'border-color': tokenAccent,
+            'border-width': 2,
+            'overlay-color': tokenAccent,
+            'overlay-padding': 6,
+            'overlay-opacity': 0.18,
           } as never,
         },
         {
           selector: 'edge',
           style: {
-            width: 1.5,
-            'line-color': '#475569',
-            'target-arrow-color': '#475569',
+            width: 1,
+            'line-color': tokenEdge,
+            'target-arrow-color': tokenEdge,
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'arrow-scale': 0.8,
-            opacity: 0.7,
+            'arrow-scale': 0.7,
+            opacity: 0.6,
           } as never,
         },
       ],
@@ -313,7 +320,7 @@
     </div>
 
     <div class="right">
-      <span class="hint">drag to scrub · gold ring = new in this frame</span>
+      <span class="hint">drag to scrub · blue ring = new in this frame</span>
     </div>
   </div>
 </div>
@@ -325,6 +332,7 @@
     height: 100%;
     min-height: 460px;
     background: var(--bg-1);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
   }
@@ -349,8 +357,8 @@
   .ctrl {
     width: 30px;
     height: 28px;
-    background: var(--bg-3);
-    border: none;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     color: var(--text-2);
     border-radius: var(--radius);
     font-size: var(--fs-label);
@@ -358,13 +366,13 @@
     display: grid;
     place-items: center;
     font-family: var(--font-sans);
-    transition: background 120ms ease, color 120ms ease;
+    transition: border-color 120ms ease, color 120ms ease;
   }
   .ctrl.play {
     color: var(--accent);
   }
   .ctrl:hover:not(:disabled) {
-    background: var(--border-2);
+    border-color: var(--accent);
     color: var(--text);
   }
   .ctrl:disabled {
@@ -409,7 +417,7 @@
     font-weight: var(--fw-semibold);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--bg);
+    color: var(--accent-fg);
   }
   .right {
     text-align: right;

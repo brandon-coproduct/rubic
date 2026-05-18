@@ -1,11 +1,10 @@
-/* Vercel's typeface family — designed dark-first, sits in the same
-   visual register as Linear / Stripe / Warp / Raycast. Variable so we
-   pay one font download for the whole weight range. */
+/* Vercel's typeface family — designed for both modes; sits in the same
+   visual register as Tailscale / Vault / Pomerium / 1Password's UIs. */
 @import '@fontsource-variable/geist';
 @import '@fontsource-variable/geist-mono';
 
 :root {
-  /* Type system: one family, three sizes, two weights. Anything outside
+  /* Type system: one family, four sizes, two weights. Anything outside
      this scale is a smell. */
   --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -24,25 +23,51 @@
   --leading-tight: 1.25;
   --leading-body:  1.55;
 
-  /* Surface palette — slate scale + single gold accent. The discipline is
-     "all chrome lives in this palette, ever; if you need a color outside it,
-     question whether the element needs to exist." */
-  --bg:        #050913; /* page */
-  --bg-1:      #0b1220; /* panel */
-  --bg-2:      #0f172a; /* card */
-  --bg-3:      #1e293b; /* input / hover */
-  --border:    #1e293b; /* subtle border in dark mode */
-  --border-2:  #334155; /* slightly stronger border for emphasis */
-  --text:      #e2e8f0; /* primary */
-  --text-2:    #cbd5e1; /* secondary */
-  --text-3:    #94a3b8; /* tertiary / labels */
-  --text-4:    #64748b; /* quaternary / disabled */
+  /* Light surface palette. Target: security-engineering audience —
+     restrained monochromatic with a single deep-blue accent. References:
+     Tailscale ACL, Vault, Pomerium. The discipline is "color only earns
+     its place when it carries semantic meaning (trust, accept, reject)";
+     decorative color is removed. */
 
-  --accent:    #d4a017; /* gold — single accent, used sparingly */
-  --accept:    #16a34a; /* green — outcome only */
-  --reject:    #dc2626; /* red — outcome only */
+  /* Surfaces (light → dark step) */
+  --bg:        #fafaf7; /* page — warm off-white, easier on the eye than pure white */
+  --bg-1:      #ffffff; /* cards / primary surfaces */
+  --bg-2:      #f4f4f5; /* secondary surfaces (inputs, code blocks) */
+  --bg-3:      #e7e7ea; /* hover / pressed */
 
-  /* Spacing tokens — multiples of 4 */
+  /* Borders */
+  --border:    #e4e4e7; /* subtle separator */
+  --border-2:  #d4d4d8; /* stronger emphasis */
+
+  /* Text (darker → lighter) */
+  --text:      #09090b; /* primary — near-black with the slightest warm cast */
+  --text-2:    #27272a;
+  --text-3:    #52525b; /* labels, tertiary */
+  --text-4:    #71717a; /* quaternary, disabled */
+
+  /* Accent — deep blue. The single chromatic color in the chrome.
+     Used only on: primary CTA, interactive accents, the agent/receipt
+     left-edge marker, focused inputs, scrubber. Picking blue over gold
+     because gold reads consumer/marketing while blue reads identity/
+     trust/security in this space (Cloudflare, Auth0, Vault, Signal). */
+  --accent:        #1e40af;  /* primary */
+  --accent-hover:  #1e3a8a;  /* deeper on hover */
+  --accent-soft:   #dbeafe;  /* soft tinted bg (focus rings, selection) */
+  --accent-fg:     #ffffff;  /* text on a primary-accent background */
+
+  /* Semantic outcome colors — only used for accept/reject pills and
+     code-execution result coloring. */
+  --accept:           #15803d;  /* foreground green */
+  --accept-bg:        #dcfce7;  /* green-100 pill background */
+  --accept-fg:        #14532d;  /* green-900 text on accept-bg */
+  --accept-edge:      #16a34a;  /* card left-edge marker */
+
+  --reject:           #b91c1c;
+  --reject-bg:        #fee2e2;
+  --reject-fg:        #7f1d1d;
+  --reject-edge:      #dc2626;
+
+  /* Spacing — 4px grid */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
@@ -54,7 +79,11 @@
 
   --radius: 6px;
 
-  color-scheme: dark;
+  /* Soft elevation — used sparingly, only on the MCP modal */
+  --shadow-md: 0 8px 32px rgba(15, 23, 42, 0.12),
+               0 2px 8px rgba(15, 23, 42, 0.06);
+
+  color-scheme: light;
 }
 
 html,
@@ -67,7 +96,6 @@ body,
   font-family: var(--font-sans);
   font-size: var(--fs-body);
   line-height: var(--leading-body);
-  /* Sharper rendering on retina; matches Linear/Vercel feel. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -88,4 +116,9 @@ kbd,
 samp,
 pre {
   font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
 }

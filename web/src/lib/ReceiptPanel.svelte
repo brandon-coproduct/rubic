@@ -150,9 +150,10 @@
 
 <style>
   .receipt {
-    background: var(--bg-2);
-    border-radius: var(--radius);
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
     padding: var(--s-4) var(--s-5);
     color: var(--text);
     font-size: var(--fs-body);
@@ -181,30 +182,30 @@
     letter-spacing: 0.1em;
   }
   .decision.accepted {
-    background: #052e16;
-    color: #4ade80;
+    background: var(--accept-bg);
+    color: var(--accept-fg);
   }
   .decision.rejected {
-    background: #2a0808;
-    color: #f87171;
+    background: var(--reject-bg);
+    color: var(--reject-fg);
   }
   .actions {
     display: flex;
     gap: var(--s-2);
   }
   button {
-    background: var(--bg-3);
-    border: none;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     color: var(--text-2);
     padding: 5px 12px;
     border-radius: var(--radius);
     font-size: var(--fs-label);
     font-family: var(--font-sans);
     cursor: pointer;
-    transition: background 120ms ease, color 120ms ease;
+    transition: border-color 120ms ease, color 120ms ease;
   }
   button:hover:not(:disabled) {
-    background: var(--border-2);
+    border-color: var(--accent);
     color: var(--text);
   }
   button:disabled {
@@ -273,18 +274,18 @@
     gap: var(--s-1);
   }
   .verify-result.ok {
-    background: #052e16;
-    color: #4ade80;
+    background: var(--accept-bg);
+    color: var(--accept-fg);
   }
   .verify-result.bad {
-    background: #2a0808;
-    color: #f87171;
+    background: var(--reject-bg);
+    color: var(--reject-fg);
   }
   .verify-fail {
     margin-top: var(--s-2);
     padding: var(--s-3);
-    background: #2a0808;
-    color: #f87171;
+    background: var(--reject-bg);
+    color: var(--reject-fg);
     border-radius: var(--radius);
     font-size: var(--fs-label);
   }
@@ -292,7 +293,8 @@
     color: var(--text-3);
   }
   .card {
-    background: var(--bg-2);
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: var(--s-4);
     font-size: var(--fs-body);

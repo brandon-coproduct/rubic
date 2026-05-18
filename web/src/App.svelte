@@ -457,7 +457,7 @@
   }
   .mcp-btn {
     background: var(--accent);
-    color: var(--bg);
+    color: var(--accent-fg);
     border: none;
     padding: 7px 14px;
     border-radius: var(--radius);
@@ -466,15 +466,16 @@
     font-family: var(--font-sans);
     cursor: pointer;
     letter-spacing: 0;
-    transition: opacity 120ms ease;
+    transition: background 120ms ease;
   }
   .mcp-btn:hover {
-    opacity: 0.9;
+    background: var(--accent-hover);
   }
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
     z-index: 50;
   }
   .modal {
@@ -489,7 +490,7 @@
     padding: var(--s-6);
     color: var(--text);
     z-index: 51;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+    box-shadow: var(--shadow-md);
   }
   .modal-head {
     display: flex;
@@ -524,7 +525,7 @@
     color: var(--text-2);
   }
   .modal-body code {
-    background: var(--bg-3);
+    background: var(--bg-2);
     padding: 1px 5px;
     border-radius: 3px;
     color: var(--text);
@@ -532,7 +533,7 @@
     font-size: var(--fs-label);
   }
   .mcp-snippet {
-    background: var(--bg);
+    background: var(--bg-2);
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -551,7 +552,7 @@
   }
   .copy-btn {
     background: var(--accent);
-    color: var(--bg);
+    color: var(--accent-fg);
     border: none;
     padding: 7px 14px;
     border-radius: var(--radius);
@@ -559,6 +560,10 @@
     font-weight: var(--fw-semibold);
     font-family: var(--font-sans);
     cursor: pointer;
+    transition: background 120ms ease;
+  }
+  .copy-btn:hover {
+    background: var(--accent-hover);
   }
   .docs-link {
     color: var(--text-3);
@@ -583,12 +588,12 @@
     font-weight: var(--fw-medium);
     margin-right: var(--s-1);
   }
-  /* Flat chips — no border, just a slight background tint that brightens
-     on hover. Reads as "this is a low-commitment shortcut," not a primary
-     action that competes with the buttons. */
+  /* Flat chips — slight bordered surface that gains depth on hover.
+     Reads as "this is a low-commitment shortcut," not a primary action
+     that competes with the buttons. */
   .try-chip {
-    background: var(--bg-2);
-    border: none;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     color: var(--text-2);
     padding: 5px 10px;
     border-radius: var(--radius);
@@ -598,10 +603,10 @@
     align-items: center;
     gap: var(--s-1);
     font-family: var(--font-mono);
-    transition: background 120ms ease, color 120ms ease;
+    transition: border-color 120ms ease, color 120ms ease;
   }
   .try-chip:hover {
-    background: var(--bg-3);
+    border-color: var(--accent);
     color: var(--text);
   }
   .try-chip code {
@@ -762,22 +767,23 @@
     font-weight: var(--fw-medium);
   }
   input {
-    background: var(--bg-2);
+    background: var(--bg-1);
     border: 1px solid var(--border);
     color: var(--text);
     padding: 8px 10px;
     border-radius: var(--radius);
     font-size: var(--fs-body);
     font-family: var(--font-mono);
-    transition: border-color 120ms ease;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
   }
   input:focus {
     outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
   button {
     background: var(--accent);
-    color: var(--bg);
+    color: var(--accent-fg);
     border: none;
     padding: 8px 14px;
     border-radius: var(--radius);
@@ -785,10 +791,10 @@
     font-weight: var(--fw-semibold);
     font-family: var(--font-sans);
     cursor: pointer;
-    transition: opacity 120ms ease;
+    transition: background 120ms ease;
   }
   button:hover:not(:disabled) {
-    opacity: 0.9;
+    background: var(--accent-hover);
   }
   button:disabled {
     opacity: 0.4;
@@ -797,28 +803,29 @@
   .err {
     margin-top: var(--s-2);
     padding: var(--s-3);
-    background: #2a0808;
-    color: #f87171;
+    background: var(--reject-bg);
+    color: var(--reject-fg);
     border-radius: var(--radius);
     font-size: var(--fs-label);
   }
-  /* Secondary action: solid but distinct from the primary gold so the
-     two paths read as siblings, not as "primary vs outlined." */
+  /* Secondary action: solid neutral so the two paths read as siblings,
+     not as "primary vs outlined." */
   .agent-btn {
-    background: var(--bg-3);
+    background: var(--bg-2);
     color: var(--text);
-    border: none;
+    border: 1px solid var(--border);
   }
   .agent-btn:hover:not(:disabled) {
-    background: var(--border-2);
+    background: var(--bg-3);
     opacity: 1;
   }
   .agent-panel {
     margin-top: var(--s-3);
     padding: var(--s-4);
-    background: var(--bg-2);
-    border-radius: var(--radius);
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
     font-size: var(--fs-label);
   }
   .agent-head {
@@ -885,20 +892,22 @@
     line-height: var(--leading-body);
   }
   .replay-pill {
-    background: var(--bg-3);
+    background: var(--accent-soft);
     padding: 1px 6px;
     border-radius: 3px;
-    color: var(--text-3);
+    color: var(--accent-hover);
     font-size: var(--fs-eyebrow);
     font-family: var(--font-mono);
     letter-spacing: 0.03em;
+    font-weight: var(--fw-medium);
   }
   .chips-panel {
     margin-top: var(--s-3);
     padding: var(--s-4);
-    background: var(--bg-2);
-    border-radius: var(--radius);
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
   }
   .chips-head {
     font-size: var(--fs-label);
@@ -912,8 +921,8 @@
     gap: var(--s-2);
   }
   .chip {
-    background: var(--bg-3);
-    border: none;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
     color: var(--text-2);
     padding: 5px 10px;
     border-radius: var(--radius);
@@ -923,10 +932,10 @@
     display: inline-flex;
     align-items: center;
     gap: var(--s-1);
-    transition: background 120ms ease;
+    transition: border-color 120ms ease, color 120ms ease;
   }
   .chip:hover {
-    background: var(--border-2);
+    border-color: var(--accent);
     color: var(--text);
   }
   .chip code {
