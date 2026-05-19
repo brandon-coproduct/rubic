@@ -105,6 +105,49 @@ receipt back.
 
 ---
 
+## How rubic relates to nucleus
+
+Rubic is the **pre-decision authorization gate** in a two-layer agent
+governance stack. Its sibling project [nucleus](https://github.com/brandon-coproduct/nucleus)
+is the **post-decision execution enforcer**.
+
+```
+LLM proposes "grant support-bot the support-writer role for write:db.tickets"
+   ↓
+[rubic]              "Is the proposed role assignment sound?"
+                     egglog reachability + policy invariants
+                     → signed authorization receipt
+   ↓
+[nucleus tool-proxy] "Given that role + current taint state, may the
+                      tool actually fire right now?"
+                     Heyting-algebra capability lattice + IFC
+                     → execution receipt (lineage edge)
+   ↓
+[execute the tool]
+   ↓
+[nucleus-lineage]    Append a hash-chained provenance edge:
+                     "this write was derived from these reads."
+```
+
+Rubic answers *may we grant this role?* Nucleus answers *given the role,
+may we use it for this operation right now?* Both are necessary;
+neither is sufficient. Rubic has no concept of taint or runtime
+capability attenuation; nucleus has no concept of RBAC role
+enumeration.
+
+**Receipt format interop:** rubic's `Proof { kid, alg, sig, prev_hash }`
+envelope is byte-identical to nucleus-lineage's, with a domain-separated
+canonical-bytes prefix (`rubic-rbac-1\0...`) so a generic Ed25519
+verifier can authenticate either format without confusion. Both share
+the same cryptographic discipline (Ed25519, BLAKE3, NUL-separated
+canonical bytes, deterministic field ordering).
+
+Both projects are MIT-licensed and standalone-useful; this
+documentation surfaces the composition because it isn't otherwise
+obvious from the code.
+
+---
+
 ## Architecture
 
 ```

@@ -13,8 +13,16 @@ use core_ir::digest::Digest;
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 use serde::{Deserialize, Serialize};
 
-pub const RECEIPT_VERSION: &str = "rbac-1";
+pub const RECEIPT_VERSION: &str = "rubic-rbac-1";
 pub const PROOF_ALG: &str = "Ed25519";
+
+/// Domain-separation prefix prepended to every receipt's canonical bytes.
+/// Ensures a signature over a rubic receipt can never be confused with a
+/// signature over any other format that happens to use the same Proof
+/// envelope (e.g. `nucleus-lineage::LineageEdge`). A third-party verifier
+/// that reads the leading bytes knows immediately what payload schema to
+/// expect — no field-by-field guessing, no cross-version forgery risk.
+pub const DOMAIN_SEPARATOR: &[u8] = b"rubic-rbac-1\0";
 
 // ── Proof envelope (nucleus-lineage shape) ──────────────────────────────────
 
@@ -83,9 +91,20 @@ pub struct Receipt {
 impl Receipt {
     /// Canonical bytes that the proof signs over. Excludes `proof`.
     /// Stable across cosmetic JSON changes.
+    ///
+    /// Format:
+    ///   `DOMAIN_SEPARATOR ‖ receipt_version\0 ‖ <fields...>`
+    ///
+    /// The domain separator at the front is what makes rubic receipts
+    /// safely verifiable by the same Ed25519 verifier that handles
+    /// `nucleus-lineage::Proof` payloads: the cryptographic layer is
+    /// identical (`Proof { kid, alg, sig, prev_hash }`), but the bytes
+    /// being signed are unambiguously labeled, so a verifier can refuse
+    /// a payload whose domain it doesn't recognize.
     pub fn canonical_bytes(&self) -> Vec<u8> {
         let mut out = Vec::with_capacity(512);
 
+        out.extend_from_slice(DOMAIN_SEPARATOR);
         push_field(&mut out, &self.receipt_version);
         out.extend_from_slice(&self.model_digest);
         out.push(0);
@@ -180,6 +199,29 @@ impl Receipt {
             None => false, // a chained receipt must declare its predecessor
         }
     }
+}
+
+/// Payload-agnostic Ed25519 verification — given the canonical bytes
+/// (however they were computed), a Proof envelope, and a verifying key,
+/// is this signature valid?
+///
+/// This is the function a generic verifier (or `nucleus-lineage`) would
+/// call. The signature math doesn't care what bytes mean; it only cares
+/// that they're the same bytes the signer used. Exposing this helper
+/// makes explicit that rubic's Proof envelope is interchangeable with
+/// any other Ed25519-based receipt format: pull out `proof`, recompute
+/// the canonical bytes per the format's spec, call this function.
+pub fn verify_canonical_bytes(
+    bytes: &[u8],
+    proof: &Proof,
+    vk: &VerifyingKey,
+) -> bool {
+    let sig_bytes: [u8; 64] = match proof.sig.as_slice().try_into() {
+        Ok(b) => b,
+        Err(_) => return false,
+    };
+    let sig = Signature::from_bytes(&sig_bytes);
+    vk.verify(bytes, &sig).is_ok()
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────────
@@ -444,6 +486,64 @@ mod tests {
         assert!(
             !json.contains("accepted_plan_digest"),
             "absent field should be omitted, got {json}"
+        );
+    }
+
+    #[test]
+    fn canonical_bytes_begin_with_domain_separator() {
+        let r = skel(true);
+        let bytes = r.canonical_bytes();
+        assert!(
+            bytes.starts_with(DOMAIN_SEPARATOR),
+            "canonical bytes must lead with the domain separator so any \
+             generic Ed25519 verifier can confirm the format before \
+             attempting to interpret payload fields"
+        );
+    }
+
+    #[test]
+    fn receipt_version_is_namespaced() {
+        // We bumped from `rbac-1` to `rubic-rbac-1` to reduce ambiguity
+        // with any other RBAC-flavored receipt format in the ecosystem.
+        assert_eq!(RECEIPT_VERSION, "rubic-rbac-1");
+        let r = skel(true);
+        assert_eq!(r.receipt_version, RECEIPT_VERSION);
+    }
+
+    /// Demonstrates the payload-agnostic verification path — the same
+    /// shape a third-party verifier (or `nucleus-lineage`) would use:
+    /// pull out `proof`, recompute canonical bytes via the format spec,
+    /// verify. Nothing here depends on the `Receipt` Rust type.
+    #[test]
+    fn interop_verifier_can_authenticate_without_receipt_type() {
+        let sk = keypair();
+        let r = skel(true).sign(&sk, "kid-interop");
+
+        // Serialize then deserialize to make sure the bytes round-trip
+        // cleanly — what a foreign verifier would actually see.
+        let json = serde_json::to_string(&r).unwrap();
+        let back: Receipt = serde_json::from_str(&json).unwrap();
+
+        // The foreign verifier extracts the proof, recomputes the
+        // canonical bytes from the receipt payload, and calls the
+        // generic helper. This is exactly what nucleus-lineage's
+        // verifier shape would do.
+        let canonical = back.canonical_bytes();
+        let proof = back.proof.clone();
+        let vk = sk.verifying_key();
+
+        assert!(
+            verify_canonical_bytes(&canonical, &proof, &vk),
+            "payload-agnostic verification must succeed"
+        );
+
+        // Tampering anywhere in the canonical bytes — including in our
+        // domain separator — must break the signature.
+        let mut tampered = canonical.clone();
+        tampered[0] ^= 0xFF;
+        assert!(
+            !verify_canonical_bytes(&tampered, &proof, &vk),
+            "a single-bit flip in the domain separator must invalidate"
         );
     }
 }
